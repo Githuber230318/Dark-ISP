@@ -1,7 +1,6 @@
 # Dark-ISP
 
-![Overview of Dark-ISP](./mainfigure.png)
-
+**The implementation of paper "Dark-ISP: Enhancing RAW Image Processing for Low-Light Object Detection".**
 
 ## ⚙️ Dependencies and Installation:
 Create the conda virtual environment with python version 3.8 and CUDA version 10.2
