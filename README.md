@@ -1,6 +1,6 @@
 # Dark-ISP
 
-![Overview of Dark-ISP](./mainfigure.jpg)
+![Overview of Dark-ISP](./mainfigure.png)
 
 
 ## ⚙️ Dependencies and Installation:
