@@ -10,30 +10,30 @@ Create the conda virtual environment with python version 3.8 and CUDA version 10
   cd mmdetection_github
   pip install -r requirements.txt 
 ```
-**⚠️ There are several libraries that require editable installation:**
-### 1.mmcv
+### ⚠️ There are several libraries that require editable installation:
+#### 1.mmcv
 ```bash
 cd ../mmcv-2.1.0
 pip install -v -e .
 ```
-### 2.mmengine
+#### 2.mmengine
 ``` bash
 cd ../mmengine-0.10.5
 pip install -v -e .
 ```
-### 3.mmdet
+#### 3.mmdet
 ```bash
 cd ../mmdetection_github
 pip install -v -e .
 ```
-### 4.LibRaw and rawpy
+#### 4.LibRaw and rawpy
 Unzip them:
 ```bash
 cd ../downloads
 unzip LibRaw-0.21.1.zip
 unzip rawpy.zip
 ```
-#### If you have `sudo` permission:
+##### If you have `sudo` permission:
 ```bash
 cd LibRaw-0.21.1
 ./configure
@@ -42,7 +42,7 @@ sudo make install
 cd ../rawpy
 RAWPY_USE_SYSTEM_LIBRAW=1 pip install -e .
 ```
-#### Otherwise:
+##### Otherwise:
 ```
 cd LibRaw-0.21.1
 ./configure --prefix=/path/to/your/directory 
