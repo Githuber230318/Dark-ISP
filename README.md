@@ -1,4 +1,8 @@
 # Dark-ISP
+
+![Overview of Dark-ISP](./mainfigure.jpg)
+
+
 ## ⚙️ Dependencies and Installation:
 Create the conda virtual environment with python version 3.8 and CUDA version 10.2
 ```bash
