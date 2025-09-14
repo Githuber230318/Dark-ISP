@@ -1,0 +1,54 @@
+addict
+matplotlib
+numpy
+pyyaml
+rich
+termcolor
+yapf
+
+[:sys_platform == "win32"]
+regex
+
+[all]
+addict
+matplotlib
+numpy
+pyyaml
+rich
+termcolor
+yapf
+bitsandbytes
+clearml
+coverage
+dadaptation
+dvclive
+lion-pytorch
+lmdb
+mlflow
+parameterized
+pydantic==1.10.9
+pytest
+transformers
+
+[all:sys_platform != "win32"]
+aim<=3.17.5
+
+[all:sys_platform == "win32"]
+regex
+
+[tests]
+bitsandbytes
+clearml
+coverage
+dadaptation
+dvclive
+lion-pytorch
+lmdb
+mlflow
+parameterized
+pydantic==1.10.9
+pytest
+transformers
+
+[tests:sys_platform != "win32"]
+aim<=3.17.5
