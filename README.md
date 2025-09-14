@@ -73,5 +73,5 @@ python mmdetection_github/tools/train.py mmdetection_github/configs/LOD/VOCmetri
 ```
 ## 📷 Test
 ```python
-python mmdetection_github/tools/test.py mmdetection_github/configs/LOD/VOCmetric/R_Net_denoise_50.py work_dirs/Ablation_experments/Nonlinear/Tayler_res_softmax_v2_epo10/0.704.pth
+python mmdetection_github/tools/test.py mmdetection_github/configs/LOD/VOCmetric/R_Net_denoise_50.py mmdetection_github/checkpoints/Daek-ISP_LOD_70.4.pth
 ```
