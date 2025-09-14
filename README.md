@@ -65,8 +65,8 @@ We have uploaded the LOD dataset and its orignal RAW image [here](https://pan.ba
 To accelerate training, it is necessary to preprocess RAW format files into npz files. You need to replace the corresponding directory name in the code, then run it：
 ```python
 python mmdetection_github/LOD_RAW_preprocess.py
-
 ```
+The processed npz file was also uploaded to the cloud disk.
 ## 🤖 Training and Evaluation
 ```python
 python mmdetection_github/tools/train.py mmdetection_github/configs/LOD/VOCmetric/R_Net_denoise_50.py
