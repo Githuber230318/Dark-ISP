@@ -66,7 +66,7 @@ RAWPY_USE_SYSTEM_LIBRAW=1 pip install -e .
 ## 🗄 Data Peparation
 The LOD dataset and orignal RAW images are uploaded [here](https://pan.baidu.com/s/1Ek-q_9DaSLceLD4dhOYQAA?pwd=2025) (Extraction code：2025).
 
-To accelerate training, it is necessary to preprocess RAW format files into npz files. You need to replace the corresponding directory name in the code, then run it：
+To accelerate training, it is necessary to preprocess RAW format files into npz files. You need to replace the corresponding directory name in `LOD_RAW_preprocess.py`
 ```python
 python mmdetection_github/LOD_RAW_preprocess.py
 ```
