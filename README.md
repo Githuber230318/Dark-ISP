@@ -1,6 +1,6 @@
 # Dark-ISP
 
-**The implementation of paper "Dark-ISP: Enhancing RAW Image Processing for Low-Light Object Detection".**
+***The implementation of paper "Dark-ISP: Enhancing RAW Image Processing for Low-Light Object Detection".***
 
 ## ⚙️ Dependencies and Installation:
 Create the conda virtual environment with python version 3.8 and CUDA version 10.2
@@ -63,7 +63,7 @@ cd ../rawpy
 RAWPY_USE_SYSTEM_LIBRAW=1 pip install -e .
 ```
 ## 🗄 Data Peparation
-We have uploaded the LOD dataset and orignal RAW images [here](https://pan.baidu.com/s/1234567890) (Extraction code：abcd).
+The LOD dataset and orignal RAW images are uploaded [here](https://pan.baidu.com/s/1234567890) (Extraction code：abcd).
 
 To accelerate training, it is necessary to preprocess RAW format files into npz files. You need to replace the corresponding directory name in the code, then run it：
 ```python
