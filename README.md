@@ -13,7 +13,7 @@ Create the conda virtual environment with python version 3.8 and CUDA version 10
   cd mmdetection_github
   pip install -r requirements.txt 
 ```
-### ⚠️ There are several libraries that require editable installation. All versions must be the same as those given. If some libraries update automatically during the installation process, they need to be uninstalled and reinstalled.
+### ⚠️ There are several libraries that require editable installation. All of them must be the same as the given in this . If some libraries update automatically during the installation process, they need to be uninstalled and reinstalled.
 #### 1.mmcv
 ```bash
 cd ../mmcv-2.1.0
@@ -71,6 +71,7 @@ python mmdetection_github/LOD_RAW_preprocess.py
 ```
 The processed npz file was also uploaded to the cloud disk.
 ## 🤖 Training and Evaluation
+Modify the path information in the config files.
 ```python
 python mmdetection_github/tools/train.py mmdetection_github/configs/LOD/VOCmetric/R_Net_denoise_50.py
 ```
