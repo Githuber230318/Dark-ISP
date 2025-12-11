@@ -1,7 +1,6 @@
 # Dark-ISP
 
-![Overview of Dark-ISP](./mainfigure.jpg)
-
+***The implementation of paper "Dark-ISP: Enhancing RAW Image Processing for Low-Light Object Detection".***
 
 ## ⚙️ Dependencies and Installation:
 Create the conda virtual environment with python version 3.8 and CUDA version 10.2
@@ -14,7 +13,8 @@ Create the conda virtual environment with python version 3.8 and CUDA version 10
   cd mmdetection_github
   pip install -r requirements.txt 
 ```
-### ⚠️ There are several libraries that require editable installation. All versions must be the same as those given. If some libraries update automatically during the installation process, they need to be uninstalled and reinstalled.
+### ⚠️ There are several libraries that require editable installation. 
+All of them must be the same as the given in this repository. If some libraries update automatically during the installation process, they need to be uninstalled and reinstalled.
 #### 1.mmcv
 ```bash
 cd ../mmcv-2.1.0
@@ -64,18 +64,20 @@ cd ../rawpy
 RAWPY_USE_SYSTEM_LIBRAW=1 pip install -e .
 ```
 ## 🗄 Data Peparation
-We have uploaded the LOD dataset and orignal RAW images [here](https://pan.baidu.com/s/1234567890) (Extraction code：abcd).
+The LOD dataset and orignal RAW images are uploaded [here](https://pan.baidu.com/s/1Ek-q_9DaSLceLD4dhOYQAA?pwd=2025) (Extraction code：2025).
 
-To accelerate training, it is necessary to preprocess RAW format files into npz files. You need to replace the corresponding directory name in the code, then run it：
+To accelerate training, it is necessary to preprocess RAW format files into npz files. You need to replace the corresponding directory name in `LOD_RAW_preprocess.py`
 ```python
 python mmdetection_github/LOD_RAW_preprocess.py
 ```
 The processed npz file was also uploaded to the cloud disk.
 ## 🤖 Training and Evaluation
+Modify the path information in the config files.
 ```python
 python mmdetection_github/tools/train.py mmdetection_github/configs/LOD/VOCmetric/R_Net_denoise_50.py
 ```
 ## 📷 Test
+Download the [checkpoint](https://pan.baidu.com/s/1xtvygvwL2FIoUkTJI7ogoA?pwd=2025) (Extraction code：2025).
 ```python
 python mmdetection_github/tools/test.py mmdetection_github/configs/LOD/VOCmetric/R_Net_denoise_50.py mmdetection_github/checkpoints/Daek-ISP_LOD_70.4.pth
 ```
