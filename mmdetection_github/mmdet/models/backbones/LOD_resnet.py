@@ -20,10 +20,10 @@ from .LIS.CustomConv import *
 from .LOD_Adapter.input_adapter import Input_level_Adapeter
 from .RAW_Adapter.model_adapter import Model_level_Adapeter, Merge_block
 # Model-level Adapter
-from mmdet.models.backbones.LED_Adapter.utils import cam_process, color_transform, default_ISP, gamma_expansion, default_ISP_3c, cosine_similarity, apply_wb
+from mmdet.models.backbones.Dark_modules.utils import cam_process, color_transform, default_ISP, gamma_expansion, default_ISP_3c, cosine_similarity, apply_wb
 
-from .LED_Adapter.noise_predictor import Params_Predictor,  LUT3D,  Color_Level_Process_v2, Matrix_Predictor_v2, Matrix_Predictor_v3, Color_Level_Process_v3, Weight_Merge, Matrix_Predictor_v1_5, Matrix_Predictor_v4, Color_Level_Process_v4, Matrix_Predictor_v5
-from mmdet.models.backbones.LED_Adapter.model_adapter import Attention_Merge, Channel_Spatial_Adapter
+from .Dark_modules.noise_predictor import LUT3D,  Matrix_Predictor, Color_Level_Process
+
 
 class BasicBlock(BaseModule):
     expansion = 1
@@ -424,27 +424,12 @@ class LOD_ResNet(BaseModule):
         self.inplanes = stem_channels
         self.version = ISP_version       
         
-        if self.version == 'v1':
-            self.params_predictor = Params_Predictor(dim=64, attn_drop=0.2, proj_drop=0.2, head_drop=0.2)
-            self.gamma = nn.Parameter(torch.FloatTensor([2.2]), requires_grad=True)
-            self.color_mapper = LUT3D(n_colors=3, n_vertices=17, n_feats=64, n_ranks=3)
-        elif self.version == 'v2':
-            self.gamma = nn.Parameter(torch.FloatTensor([2.2]), requires_grad=True)
-            self.params_predictor = Matrix_Predictor_v2(attn_drop=0.1, proj_drop=0.1, head_drop=0.2, data='LOD')
-            self.nonlinear = Color_Level_Process_v3()
-            # self.nonlinear2 = Color_Level_Process_v4()
-        elif self.version == 'v3':
-            self.params_predictor = Matrix_Predictor_v2(attn_drop=0.1, proj_drop=0.1, head_drop=0.2)
-            self.nonlinear = Color_Level_Process_v3()
-        elif self.version == 'v4':
-            self.params_predictor = Matrix_Predictor_v4(attn_drop=0.1, proj_drop=0.1, head_drop=0.2)
-            self.color_mapper = LUT3D(n_colors=3, n_vertices=17, n_feats=64, n_ranks=3)
-            self.gamma = nn.Parameter(torch.FloatTensor([2.2]), requires_grad=True)
-            self.nonlinear = Color_Level_Process_v3()
-
-
-        self.w_lut = w_lut  # with or without implicit 3D LUT
-        self.sigmoid = nn.Sigmoid()
+       
+        self.gamma = nn.Parameter(torch.FloatTensor([2.2]), requires_grad=True)
+        self.params_predictor = Matrix_Predictor(attn_drop=0.1, proj_drop=0.1, head_drop=0.2, data='LOD')
+        self.nonlinear = Color_Level_Process()
+        self.color_mapper = LUT3D(n_colors=3, n_vertices=17, n_ranks=3)
+        self.gamma = nn.Parameter(torch.FloatTensor([2.2]), requires_grad=True)
         self.pre_encoder = Input_level_Adapeter(mode = light_mode, lut_dim = lut_dim, k_size=k_size, w_lut=self.w_lut)    
         
         self.model = model
