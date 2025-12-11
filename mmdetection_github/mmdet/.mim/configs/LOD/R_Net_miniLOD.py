@@ -23,7 +23,7 @@ model = dict(
         norm_cfg=dict(type='BN', requires_grad=True),
         norm_eval=True,
         style='pytorch',
-        pretrained_unet='mmdetection_github/mmdet/models/backbones/LED_Adapter/checkpoint/LOD.pth',
+        pretrained_unet='mmdetection_github/mmdet/models/backbones/Dark_modules/checkpoint/LOD.pth',
         fozeunet=False,
         ISP_version='v0',
         init_cfg=dict(type='Pretrained', checkpoint='torchvision://resnet50')),

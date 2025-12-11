@@ -9,7 +9,7 @@ import torch.nn.functional as F
 from mmdet.registry import MODELS
 from mmdet.structures import OptSampleList, SampleList
 from mmdet.utils import ConfigType, OptConfigType, OptMultiConfig
-from mmdet.models.backbones.LED_Adapter.utils import normlize
+from mmdet.models.backbones.Dark_modules.utils import normlize
 from mmdet.models.detectors.noise_utils import VirtualNoisyPairGenerator
 from .base import BaseDetector
 from torch import nn

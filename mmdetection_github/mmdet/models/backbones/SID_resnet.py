@@ -20,8 +20,7 @@ from ..layers import ResLayer
 # Input-level Adapter
 from .SID.unet import UNetArch
 # Model-level Adapter
-from .LED_Adapter.utils import cam_process, default_ISP, gamma_expansion, cam_process_3c, default_ISP_3c
-from .LED_Adapter.repnr_utils import RepNRBase, build_repnr_arch_from_base
+from .Dark_modules.utils import cam_process, default_ISP, gamma_expansion, cam_process_3c, default_ISP_3c
 from .LOD_Adapter.input_adapter import Input_level_Adapeter
 
 class BasicBlock(BaseModule):

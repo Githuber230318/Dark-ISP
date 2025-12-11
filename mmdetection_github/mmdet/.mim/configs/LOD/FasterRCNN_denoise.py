@@ -32,7 +32,7 @@ model = dict(
         style='pytorch',
         default_ISP=False,
         isfozen=False,
-        pretrained_unet='mmdetection_github/mmdet/models/backbones/LED_Adapter/checkpoint/LOD.pth',
+        pretrained_unet='mmdetection_github/mmdet/models/backbones/Dark_modules/checkpoint/LOD.pth',
         init_cfg=dict(type='Pretrained', checkpoint='torchvision://resnet50')),
     neck=dict(
         type='FPN',

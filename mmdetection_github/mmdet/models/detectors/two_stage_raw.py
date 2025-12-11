@@ -17,7 +17,7 @@ from typing import Dict, Optional, Tuple, Union
 from mmdet.utils import ConfigType, OptConfigType, OptMultiConfig
 from .base import BaseDetector
 from .two_stage import TwoStageDetector
-from mmdet.models.backbones.LED_Adapter.utils import normlize, default_ISP, default_ISP_3c
+from mmdet.models.backbones.Dark_modules.utils import normlize, default_ISP, default_ISP_3c
 
 def ordered_yaml():
     """Support OrderedDict for yaml.
