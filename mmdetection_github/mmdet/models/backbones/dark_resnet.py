@@ -682,6 +682,12 @@ class Dark_ResNet(BaseModule):
 
 
     def mat_loss2(self, x_i, x_l, P):
+        """
+        Parameters:
+        x_i: Iutput of Linear Component
+        x_l: Output of Nonlinear Component
+        P: Matrix to be optimized, shape [4, h, w, 3, 4]
+        """
         b, c, h, w = x_i.shape
         x_i = x_i.view(b, c, -1) # Shape:[4 4 hw]
         # Reshape tensor
@@ -696,8 +702,8 @@ class Dark_ResNet(BaseModule):
         result2 = torch.linalg.inv(result2)
         A = torch.bmm(result1, result2)
         P = torch.mean(P, dim=(1, 2))
-        # A shape:: [4, 3, 4] 
-        # B shape:: [4, h, w, 3, 4]
+        # A shape: [4, 3, 4] 
+        # P shape: [4, h, w, 3, 4]
         B, mh, mw = A.shape  
         P = P.view(B, mh, mw)
         # Calculate dot product
