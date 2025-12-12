@@ -8,24 +8,24 @@ import cv2
 
 
 def lrelu(x, leak=0.2, name=None):
-    """PyTorch 版本的 LeakyReLU（与 TensorFlow 实现完全一致）
+    """
     
-    参数:
-        x: 输入张量
-        leak: 负半轴的斜率 (默认 0.2)
-        name: 兼容性参数（PyTorch 中无实际作用）
+    Parameters:
+        x: Input tensor
+        leak: Negative half-axis slope (default 0.2)
+        name: Compatibility parameter (no actual function in PyTorch)
     """
     f1 = 0.5 * (1 + leak)
     f2 = 0.5 * (1 - leak)
     return f1 * x + f2 * torch.abs(x)
 
 def tanh_range(l, r, initial=None):
-    """PyTorch 版本的 tanh 范围映射（与 TensorFlow 实现完全一致）
+    """
     
-    参数:
-        l: 输出下限
-        r: 输出上限
-        initial: 初始偏置值
+    Parameters:
+        l: Output lower limit
+        r: Output upper limit
+        initial: Initial bias value
     """
     def tanh01(x):
         return torch.tanh(x) * 0.5 + 0.5  # 将 tanh 输出映射到 [0, 1]
@@ -40,28 +40,28 @@ def tanh_range(l, r, initial=None):
     return activation
 
 def lerp(a, b, l):
-    """线性插值函数 (Linear Interpolation)
+    """Linear Interpolation
     
-    参数:
-        a: 起始值 (张量或标量)
-        b: 结束值 (张量或标量)
-        l: 插值系数 [0,1] (张量或标量)
-    返回:
+    Parameters:
+        a: Starting value (tensor or scalar)
+        b: Ending value (tensor or scalar)
+        l: Interpolation coefficient [0,1] (tensor or scalar)
+    Returns:
         (1 - l) * a + l * b
     """
     return (1 - l) * a + l * b
 
 def rgb2lum(image):
-    """将 RGB 图像转换为亮度通道 (CIE 1931 标准)
+    """Convert RGB image to luminance channel (CIE 1931 standard)
     
-    参数:
-        image: 输入图像张量 [B, H, W, C] 或 [H, W, C] (RGB 顺序)
-    返回:
-        亮度张量 [B, H, W, 1] 或 [H, W, 1]
+    Parameters:
+        image: Input image tensor [B, H, W, C] or [H, W, C] (RGB order)
+    Returns:
+        Luminance tensor [B, H, W, 1] or [H, W, 1]
     """
-    # 按 CIE 1931 标准计算亮度
+    # Calculate luminance according to CIE 1931 standard
     lum = 0.27 * image[:, 0, ...] + 0.67 * image[:, 1, ...] + 0.06 * image[:, 2, ...]
-    return lum.unsqueeze(1)  # 添加通道维度
+    return lum.unsqueeze(1)  # Add channel dimension
 
 
 class Filter(nn.Module):
@@ -79,7 +79,7 @@ class Filter(nn.Module):
         else:
             filter_parameters = specified_parameter
         
-        # 处理图像
+        # Process image
         output = self.process(img, filter_parameters)
         return output, filter_parameters
 
@@ -122,11 +122,11 @@ class UsmFilter(Filter):
         return tanh_range(*self.cfg.usm_range)(features)
 
     def process(self, img, param):
-        # 高斯模糊
+        # Gaussian blur
         pad = (25 - 1) // 2
         padded = F.pad(img, [pad]*4, mode='reflect')
         blurred = F.conv2d(padded, self.blur_kernel.repeat(3,1,1,1).to(padded.device), stride=1, padding=0, groups=3)
-        # USM处理
+        # USM processing
         usm = (img - blurred) * param.view(-1, 1, 1, 1) + img
         return usm
 
@@ -142,7 +142,7 @@ class GammaFilter(Filter):
         return torch.exp(tanh_range(-log_gamma_range, log_gamma_range)(features))
 
     def process(self, img, param):
-        param = param.repeat(1, 3)  # 扩展到3通道
+        param = param.repeat(1, 3)  # Expand to 3 channels
         return torch.clamp(img, min=0.001).pow(param.view(-1, 3, 1, 1))
 
 class ImprovedWhiteBalanceFilter(Filter):
@@ -158,7 +158,7 @@ class ImprovedWhiteBalanceFilter(Filter):
         mask = torch.tensor([[0, 1, 1]], dtype=torch.float32)
         features = features * mask.to(features.device)
         color_scaling = torch.exp(tanh_range(-log_wb_range, log_wb_range)(features))
-        # 亮度归一化
+        # Luminance normalization
         luminance = 0.27 * color_scaling[:, 0] + 0.67 * color_scaling[:, 1] + 0.06 * color_scaling[:, 2]
         return color_scaling / (luminance.view(-1, 1) + 1e-5)
     
@@ -173,14 +173,14 @@ class ImprovedWhiteBalanceFilter(Filter):
 
 class ToneFilter(Filter):
     def __init__(self, cfg):
-        """色调曲线滤镜 (PyTorch 版)
+        """Tone curve filter 
         
-        参数:
-            net: 主干网络
-            cfg: 配置对象，需包含:
-                - curve_steps: 曲线分段数
-                - tone_begin_param: 参数起始索引
-                - tone_curve_range: 曲线数值范围 (min, max)
+        Parameters:
+            net: Main network
+            cfg: Configuration object, must contain:
+                - curve_steps: Number of curve segments
+                - tone_begin_param: Parameter starting index
+                - tone_curve_range: Curve value range (min, max)
         """
         super().__init__(cfg)
         self.curve_steps = cfg.curve_steps
@@ -190,43 +190,43 @@ class ToneFilter(Filter):
         self.tone_range = cfg.tone_curve_range
 
     def filter_param_regressor(self, features):
-        """生成色调曲线参数"""
-        # 重塑为 [B, 1, 1, curve_steps] 并应用 tanh 范围限制
+        """Generate tone curve parameters"""
+        # Reshape to [B, 1, 1, curve_steps] and apply tanh range limit
         tone_curve = features.view(-1, 1, self.curve_steps).unsqueeze(1)
         return tanh_range(*self.tone_range)(tone_curve)
 
     def process(self, img, param):
-        """应用色调曲线变换
-        参数:
-            img: 输入图像 [B, C, H, W]
-            param: 曲线参数 [B, 1, 1, curve_steps]
-        返回:
-            处理后的图像 [B, C, H, W]
+        """Apply tone curve transformation
+        Parameters:
+            img: Input image [B, C, H, W]
+            param: Curve parameters [B, 1, 1, curve_steps]
+        Returns:
+            Processed image [B, C, H, W]
         """
-        # 确保输入在 [0,1] 范围内
+        # Ensure input is in [0,1] range
         img = torch.clamp(img, 0, 1.0)
         
-        # 计算归一化系数
+        # Calculate normalization coefficient
         tone_curve_sum = param.sum(dim=-1, keepdim=True) + 1e-30
         
-        # 分段处理色调曲线
+        # Process tone curve in segments
         total_image = torch.zeros_like(img)
         for i in range(self.curve_steps):
             band = torch.clamp(img - i / self.curve_steps, 0, 1.0 / self.curve_steps)
             total_image += band * param[:, :, :, i].unsqueeze(1)
         
-        # 归一化并缩放
+        # Normalize and scale
         return total_image * (self.curve_steps / tone_curve_sum)
 
 class ContrastFilter(Filter):
     def __init__(self, cfg):
-        """对比度滤镜 (PyTorch 版)
+        """Contrast filter
         
-        参数:
-            net: 主干网络
-            cfg: 配置对象，需包含:
-                - contrast_begin_param: 参数起始索引
-                - contrast_range: 可选参数范围 (未在原始代码中使用)
+        Parameters:
+            net: Main network
+            cfg: Configuration object, must contain:
+                - contrast_begin_param: Parameter starting index
+                - contrast_range: Optional parameter range (not used in original code)
         """
         super().__init__(cfg)
         self.short_name = 'Ct'
@@ -234,26 +234,26 @@ class ContrastFilter(Filter):
         self.num_filter_parameters = 1
 
     def filter_param_regressor(self, features):
-        """生成对比度参数 (使用 tanh 激活)"""
-        return torch.tanh(features)  # 原始代码未使用 sigmoid/range 限制
+        """Generate contrast parameters (using tanh activation)"""
+        return torch.tanh(features) 
 
     def process(self, img, param):
-        """应用对比度调整
-        参数:
-            img: 输入图像 [B, C, H, W] (RGB)
-            param: 调整参数 [B, 1]
-        返回:
-            处理后的图像 [B, C, H, W]
+        """Apply contrast adjustment
+        Parameters:
+            img: Input image [B, C, H, W] (RGB)
+            param: Adjustment parameters [B, 1]
+        Returns:
+            Processed image [B, C, H, W]
         """
-        # 计算亮度并限制范围
+        # Calculate luminance and limit range
         luminance = torch.clamp(rgb2lum(img), 0.0, 1.0)  # [B, 1, H, W]
         
-        # 对比度曲线计算 (余弦变换)
+        # Calculate contrast curve (cosine transformation)
         contrast_lum = -torch.cos(math.pi * luminance) * 0.5 + 0.5
         
-        # 保持色彩比例
+        # Preserve color ratio
         contrast_image = img / (luminance + 1e-6) * contrast_lum
         
-        # 线性插值混合
+        # Linear interpolation mixing
         return lerp(img, contrast_image, param.unsqueeze(-1).unsqueeze(-1))
 

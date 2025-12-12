@@ -7,7 +7,7 @@ import torch.nn.functional as F
 def lut_transform(imgs, luts):
     # img (b, 3, h, w), lut (b, c, m, m, m)     
     # normalize pixel values
-    imgs = (imgs - .5) * 2. # 由 [0, 1] 归一化成 [-1, 1]
+    imgs = (imgs - .5) * 2. # From [0, 1] normalized to [-1, 1]
     # reshape img to grid of shape (b, 1, h, w, 3)
     grids = imgs.permute(0, 2, 3, 1).unsqueeze(1)
 

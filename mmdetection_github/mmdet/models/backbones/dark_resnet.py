@@ -640,9 +640,12 @@ class Dark_ResNet(BaseModule):
             dmat, glo, local = self.params_predictor(x_i, mat)
             x_g, mat = color_transform(x_i, mat, dmat=dmat)
             x_g = x_g.clip(0, 1)
-            x_l = self.nonlinear(x_g) 
-            loss_mat = self.mat_loss2(x_i, x_l, mat)
-            # loss_mat = self.mat_loss(x_i, x_l, mat)
+            x_l = self.nonlinear(x_g)
+            if self.training: 
+                loss_mat = self.mat_loss2(x_i, x_l, mat)
+                 # loss_mat = self.mat_loss(x_i, x_l, mat)
+            else:
+                loss_mat = torch.zeros_like(x_l)
             # loss_mat = torch.zeros_like(x_l)  # For Inference
         
         if self.model == "Enhancer":
@@ -652,11 +655,7 @@ class Dark_ResNet(BaseModule):
             # ada = self.model_adapter([x[0], x[1], x[2], x[3]]) # 1 24 104 152
             x_l = x[-1]  # 4 3 416 608
         elif self.model == "RAOD":
-            start_time = time.time()
             x_l = self.pre_processor(x_l)
-            end_time = time.time()
-            elapsed_time = end_time - start_time
-            print(f"运行时间: {elapsed_time:.6f} 秒")
         elif self.model == "IA_ISP":
             x_l = self.pre_processor(x_l)
         """Forward function."""
@@ -685,10 +684,10 @@ class Dark_ResNet(BaseModule):
     def mat_loss2(self, x_i, x_l, P):
         b, c, h, w = x_i.shape
         x_i = x_i.view(b, c, -1) # Shape:[4 4 hw]
-        # 重塑张量
+        # Reshape tensor
         x_l = x_l.view(b, 3, -1)  # Shape: [4, 3, hw]
         x_iT = x_i.permute(0, 2, 1)  # Shape: [4, hw, 4]
-        # 进行批量矩阵乘法
+        # Perform batch matrix multiplication
         result1 = torch.bmm(x_l, x_iT)  # Shape: [4, 3, 4]
         result2 = torch.bmm(x_i, x_iT)  # Shape: [4, 4, 4]
         det = torch.linalg.det(result2) # Determinant

@@ -44,7 +44,7 @@ def apply_wb(bayer_images, wbs):
         bayer_images[:,2,...]], dim=1)
     return images
 
-def apply_wb_ccm(bayer_images, wbs, ccms): # 应用颜色校正矩阵
+def apply_wb_ccm(bayer_images, wbs, ccms): # Apply color correction matrix
     """""Applies white balance to a batch of Bayer images."""""
     N, C, H, W = bayer_images.shape
     bayer_images = bayer_images * wbs.view(N, C, 1, 1)
@@ -81,14 +81,14 @@ def color_transform(images, ccms, dmat=None):
     # images = torch.clamp(images, 1e-5, 1)
     return images, ccms
 
-def gamma_expansion(images, gamma=2.2): # gamma扩展，将linear值转换为non-linear
+def gamma_expansion(images, gamma=2.2): 
     """Converts from linear to gamma space."""
     outs = torch.clamp(images, min=1e-8) ** (1 / gamma)
     outs = torch.clamp(outs*255, min=0, max=255).float() / 255
     return outs
 
 def cam_process(image, params):
-    image = apply_wb_ccm(image, params['wb'], params['ccm']) # 白平衡和颜色校正
+    image = apply_wb_ccm(image, params['wb'], params['ccm']) 
     # image = torch.clamp(image, min=0.0, max=1.0)
     return image
 
@@ -103,11 +103,11 @@ def default_ISP_3c(image, metainfo):
     return image, image_g
 
 def cam_process_3c(image, params):
-    image = apply_wb_ccm_3c(image, params['wb'], params['ccm']) # 白平衡和颜色校正
+    image = apply_wb_ccm_3c(image, params['wb'], params['ccm']) 
     image = torch.clamp(image, min=0.0, max=1.0)
     return image
 
-def apply_wb_ccm_3c(images, wbs, ccms): # 应用颜色校正矩阵
+def apply_wb_ccm_3c(images, wbs, ccms): 
     """""Applies white balance to a batch of Bayer images."""""
     N, C, _, _ = images.shape
     wbs = torch.stack([
@@ -188,11 +188,11 @@ def Tayler_res(img: torch.Tensor, weights: List) -> torch.Tensor:
 def cosine_similarity(tensorA, tensorB):
     # tensorA: [4, h, w, 3, 4] 
     # tensorB: [4, h, w, 3, 4]
-    dot_product = (tensorA * tensorB).sum(dim=4)  # 形状为 [4, h, w, 3]
+    dot_product = (tensorA * tensorB).sum(dim=4)  # shape [4, h, w, 3]
 
     # calculate norm
-    norm1 = torch.norm(tensorB, dim=-1) + 1e-5  # 形状为 [4, h, w, 3]
-    norm2 = torch.norm(tensorA, dim=-1) + 1e-5 # 形状为 [4, h, w, 3]
+    norm1 = torch.norm(tensorB, dim=-1) + 1e-5  # shape [4, h, w, 3]
+    norm2 = torch.norm(tensorA, dim=-1) + 1e-5 # shape [4, h, w, 3]
 
     # calculate similarity
     similarity = dot_product / (norm1 * norm2)
