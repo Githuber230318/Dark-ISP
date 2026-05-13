@@ -1,8 +1,7 @@
 _base_ = [
-    '/home1/guojs/codes/Dark-ISP/mmdetection_github/configs/_base_/schedules/schedule_1x.py', 
-    '/home1/guojs/codes/Dark-ISP/mmdetection_github/configs/_base_/default_runtime.py',
+    '/guojs/Dark-ISP-main/mmdetection_github/configs/_base_/schedules/schedule_1x.py', 
+    '/guojs/Dark-ISP-main/mmdetection_github/configs/_base_/default_runtime.py',
 ]
-
 
 # model settings
 model = dict(
@@ -20,12 +19,15 @@ model = dict(
         num_stages=4,
         out_indices=(0, 1, 2, 3),
         frozen_stages=-1,
-        norm_cfg=dict(type='BN', requires_grad=True),
+        norm_cfg=dict(type='BN', requires_grad=False),
         norm_eval=True,
         style='pytorch',
         model="our", #IA_ISP
         ISP_version='v2',
-        init_cfg=dict(type='Pretrained', checkpoint='torchvision://resnet50')),
+        matloss_epoch=9,
+        mat_weight=0.05,
+        init_cfg=dict(type='Pretrained', checkpoint='torchvision://resnet50')
+        ),
     neck=dict(
         type='FPN',
         in_channels=[256, 512, 1024, 2048],
@@ -75,15 +77,14 @@ model = dict(
         score_thr=0.05,
         nms=dict(type='nms', iou_threshold=0.5),
         max_per_img=10),
-    cri_pix=dict(type='L1Loss', loss_weight=1.0)
     )
 
 
 
 
 dataset_type = 'LOD_RAWDAtaset'
-data_root = '/public/home/guojs/data/LOD'
-# data_root = '/public/home/guojs/data/LOD/MiniLOD'
+data_root = '/guojs/data/LOD'
+# data_root = '/guojs/data/LOD/MiniLOD'
 
 backend_args = None
 
@@ -110,10 +111,6 @@ test_pipeline = [
         meta_keys=('img_id', 'img_path', 'ori_shape', 'img_shape',
                    'scale_factor', 'iso', 'wb', 'white_level', 'ratio',
                     'black_level', 'ccm', 'raw_pattern', 'exp_time'),
-        # bayer_substitute = '/public/home/guojs/data/LOD_BMVC2021/RGB_normal/',
-        # suffix = '.JPG'
-        # bayer_substitute = '/public/home/guojs/data/LOD_BMVC2021/RAW_dark/',
-        # suffix = '.png'
     )
 ]      
 
@@ -124,7 +121,7 @@ train_dataloader = dict(
     sampler=dict(type='DefaultSampler', shuffle=True),
     batch_sampler=dict(type='AspectRatioBatchSampler'),
     dataset=dict(
-        type='RepeatDataset',
+        type='RepeatDataset',    #原始数据量：2230
         times=8,
         dataset=dict(
             type='ConcatDataset',
@@ -204,16 +201,32 @@ test_evaluator = val_evaluator
 optim_wrapper = dict(
     type='OptimWrapper',
     optimizer=dict(type='SGD', lr=0.001, momentum=0.9, weight_decay=0.0001),
-    clip_grad=dict(max_norm=35, norm_type=2))
+    clip_grad=dict(max_norm=35, norm_type=2),
+    
+    paramwise_cfg=dict(
+        custom_keys={
+            'backbone': dict(lr_mult=0.9),       # 或 0.9（更推荐）
+            'backbone.ISP': dict(lr_mult=1.0),
+        }
+    ))
 
-max_epochs = 15  # the real epoch is 7*5 = 35
 # learning policy
 # Based on the default settings of modern detectors, we added warmup settings.
 param_scheduler = [
     dict(
         type='LinearLR', start_factor=0.001, by_epoch=False, begin=0,
         end=500),
+    # dict(
+    #     type='MultiStepLR',
+    #     by_epoch=True,
+    #     milestones=[5],
+    #     gamma=0.1
+    # )
 ]
+max_epochs = 15  # the real epoch is 7*5 = 35
+
+
+
 train_cfg = dict(max_epochs=max_epochs)  # the real epoch is 5*2 = 10
 
 # NOTE: `auto_scale_lr` is for automatically scaling LR,

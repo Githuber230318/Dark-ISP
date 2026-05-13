@@ -1,6 +1,6 @@
 _base_ = [
-    '/home1/guojs/codes/Dark-ISP/mmdetection_github/configs/_base_/schedules/schedule_1x.py', 
-    '/home1/guojs/codes/Dark-ISP/mmdetection_github/configs/_base_/default_runtime.py',
+    '/guojs/Dark-ISP-main/mmdetection_github/configs/_base_/schedules/schedule_1x.py', 
+    '/guojs/Dark-ISP-main/mmdetection_github/configs/_base_/default_runtime.py',
 ]
 
 
@@ -20,11 +20,13 @@ model = dict(
         num_stages=4,
         out_indices=(0, 1, 2, 3),
         frozen_stages=-1,
-        norm_cfg=dict(type='BN', requires_grad=True),
-        norm_eval=True,
+        norm_cfg=dict(type='GN', num_groups=32, requires_grad=True),
+        norm_eval=False,
         style='pytorch',
         model="our",
-        ISP_version='v3',
+        ISP_version='v2',
+        matloss_epoch=0,
+        mat_weight=0.1,
         init_cfg=dict(type='Pretrained', checkpoint='torchvision://resnet50')),
     neck=dict(
         type='FPN',
@@ -81,7 +83,7 @@ model = dict(
 
 # dataset settings
 dataset_type = 'NODDataset'
-data_root = '/public/home/guojs/data/NOD/'
+data_root = '/guojs/data/NOD/'
 
 backend_args = None
 
@@ -107,7 +109,7 @@ test_pipeline = [
         meta_keys=('img_id', 'img_path', 'ori_shape', 'img_shape',
                    'scale_factor', 'iso', 'wb', 'white_level', 'ratio',
                     'black_level', 'ccm', 'raw_pattern', 'exp_time'),
-        bayer_substitute = '/public/home/guojs/data/NOD/Nikon_RGB/')
+        bayer_substitute = '/guojs/data/NOD/Nikon_RGB/')
 ]
 
 train_dataloader = dict(
@@ -117,7 +119,7 @@ train_dataloader = dict(
     sampler=dict(type='DefaultSampler', shuffle=True),
     batch_sampler=dict(type='AspectRatioBatchSampler'),
     dataset=dict(
-        type='RepeatDataset',
+        type='RepeatDataset',       # 原始数据量3206
         times=8,
         dataset=dict(
             type='ConcatDataset',
@@ -202,7 +204,14 @@ test_evaluator = dict(
 optim_wrapper = dict(
     type='OptimWrapper',
     optimizer=dict(type='SGD', lr=0.01, momentum=0.9, weight_decay=0.0001),
-    clip_grad=dict(max_norm=35, norm_type=2))
+    clip_grad=dict(max_norm=35, norm_type=2),
+    
+    paramwise_cfg=dict(
+        custom_keys={
+            'backbone': dict(lr_mult=0.9),       # 或 0.9（更推荐）
+            'backbone.ISP': dict(lr_mult=1.0),
+        }
+    ))
 
 max_epochs = 15  # the real epoch is 7*5 = 35
 # learning policy
