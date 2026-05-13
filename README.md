@@ -77,7 +77,11 @@ Modify the path information in the config files.
 python mmdetection_github/tools/train.py mmdetection_github/configs/LOD/VOCmetric/R_Net_denoise_50.py
 ```
 ## 📷 Test
-Download the [checkpoint](https://pan.baidu.com/s/1xtvygvwL2FIoUkTJI7ogoA?pwd=2025) (Extraction code：2025).
+Download the [checkpoint](https://pan.baidu.com/s/1i9xUtQFjoFxC5mIbxJcq9A?pwd=2025) (Extraction code：2025).
 ```python
-python mmdetection_github/tools/test.py mmdetection_github/configs/LOD/VOCmetric/R_Net_denoise_50.py mmdetection_github/checkpoints/Daek-ISP_LOD_70.4.pth
+python mmdetection_github/tools/test.py mmdetection_github/configs/LOD/VOCmetric/R_Net_denoise_50.py mmdetection_github/checkpoints/0.704_LOD.pth
+
+python mmdetection_github/tools/test.py mmdetection_github/configs/NOD/NOD_Nikon_R_Net_denoise.py mmdetection_github/checkpoints/0.308_NOD_Nikon.pth
+
+python mmdetection_github/tools/test.py mmdetection_github/configs/NOD/NOD_Sony_R_Net_denoise.py mmdetection_github/checkpoints/0.319_NOD_Sony.pth
 ```
