@@ -24,8 +24,8 @@ class Dark_ISP(nn.Module):
 
         if self.training:
             if cur_epoch >= self.matloss_epoch:
-                loss_mat = torch.zeros_like(x_l)
-                # loss_mat = self.mat_loss2(x_i, x_l, mat, cur_epoch)
+                # loss_mat = torch.zeros_like(x_l)
+                loss_mat = self.mat_loss2(x_i, x_l, mat, cur_epoch)
             else:
                 loss_mat = torch.zeros_like(x_l)  # For Inference
                 # loss_mat = self.mat_loss(x_i, x_l, mat)
@@ -34,36 +34,6 @@ class Dark_ISP(nn.Module):
         
         return x_l, loss_mat
 
-    def mat_loss(self, x_i, x_l, P):
-        """P: matrix to be optimized, shape (4, 3, 4)"""
-        b, c, h, w = x_i.shape
-        x_i = x_i.view(b, c, -1) # Shape:[4 4 hw]
-        # 重塑张量
-        x_l = x_l.view(b, 3, -1)  # Shape: [4, 3, hw]
-        x_iT = x_i.permute(0, 2, 1)  # Shape: [4, hw, 4]
-        # 进行批量矩阵乘法
-        result1 = torch.bmm(x_l, x_iT)  # Shape: [4, 3, 4]
-        result2 = torch.bmm(x_i, x_iT)  # Shape: [4, 4, 4]
-        det = torch.linalg.det(result2) # Determinant
-        if torch.any(det == 0):
-            raise ValueError("Has zeor determinant")
-        result2 = torch.linalg.inv(result2)
-        A = torch.bmm(result1, result2) # A shape: [4, 3, 4]
-        P = torch.mean(P, dim=(1, 2))  # P shape: [4, 3, 4] 
-        B, mh, mw = A.shape  
-        P = P.view(B, mh, mw)
-        # Calculate dot product
-        dot_product = (A * P).sum(dim=2)  # Shape: [4, 3]
-
-        # Calculate Norm
-        norm1 = torch.norm(P, dim=-1) + 1e-5  # Shape: [4, 3]
-        norm2 = torch.norm(A, dim=-1) + 1e-5 # Shape: [4, 3]
-
-        # Calculate coscine similarity
-        similarity = dot_product / (norm1 * norm2)
-        loss_mat = (1 - similarity).sum(dim=-1).mean()
-
-        return loss_mat
     
     def mat_loss2(self, x_i, x_l, P, epoch):
         """P: matrix to be optimized, shape (4, 3, 4)"""
@@ -85,7 +55,6 @@ class Dark_ISP(nn.Module):
         A = A.view(b, h, w, 3, 4).permute(0, 3, 4, 1, 2)
         P = P.permute(0, 3, 4, 1, 2)  # P shape: [4, 3, 4, h, w]
 
-        # loss_mat1 = torch.mean((A - P)**2)*min(0.00125, epoch / 10 * 0.00125)
 
         # Calculate dot product
         dot_product = (A * P).sum(dim=2)  # Shape: [4, 3, h, w]
@@ -96,8 +65,7 @@ class Dark_ISP(nn.Module):
 
         # Calculate coscine similarity
         similarity = dot_product / (norm1 * norm2)
-        loss_mat = (1 - similarity).mean() * min(self.loss_weight, (epoch+1) / 10 * self.loss_weight) #0.04
+        loss_mat = (1 - similarity).mean() * min(self.loss_weight, (epoch+1) / 10 * self.loss_weight) 
 
-        # loss_mat = loss_mat + loss_mat1
 
         return loss_mat 
