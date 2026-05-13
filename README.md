@@ -1,6 +1,22 @@
-# Dark-ISP
+# Dark-ISP: Low-Light RAW Image Processing for Object Detection
 
-***The implementation of paper "Dark-ISP: Enhancing RAW Image Processing for Low-Light Object Detection".***
+Official PyTorch implementation of the paper:
+
+> Dark-ISP: Enhancing RAW Image Processing for Low-Light Object Detection
+
+This repository provides:
+- RAW image preprocessing pipeline
+- End-to-end low-light ISP network
+- MMDetection-based training framework
+- LOD / NOD benchmark support
+- Pretrained checkpoints and evaluation scripts
+
+Built with:
+- PyTorch
+- MMCV
+- MMDetection
+- RAWPy
+- LibRaw
 
 ## ⚙️ Dependencies and Installation:
 Create the conda virtual environment with python version 3.8 and CUDA version 10.2
