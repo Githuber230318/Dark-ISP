@@ -93,7 +93,7 @@ Modify the path information in the config files.
 python mmdetection_github/tools/train.py mmdetection_github/configs/LOD/VOCmetric/R_Net_denoise_50.py
 ```
 ## 📷 Test
-Download the [checkpoint](https://pan.baidu.com/s/1i9xUtQFjoFxC5mIbxJcq9A?pwd=2025) (Extraction code：2025).
+Download the checkpoint in [Baidu Netdisk](https://pan.baidu.com/s/1i9xUtQFjoFxC5mIbxJcq9A?pwd=2025) (Extraction code：2025) or [Google Drive]https://drive.google.com/drive/folders/1ZTJEdGcbkFozS73L0BM8vudpCWR0iZ93?usp=sharing.
 ```python
 python mmdetection_github/tools/test.py mmdetection_github/configs/LOD/VOCmetric/R_Net_denoise_50.py mmdetection_github/checkpoints/0.704_LOD.pth
 
